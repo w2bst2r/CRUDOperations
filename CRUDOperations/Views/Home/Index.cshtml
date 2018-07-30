@@ -1,0 +1,28 @@
+﻿@model IEnumerable<CRUDOperations.Models.Customers>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>CustomerID</th>
+            <th>CompanyName</th>
+            <th>ContactName</th>
+            <th>ContactTitle</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.CustomerID</td>
+                <td>@item.CompanyName</td>
+                <td>@item.ContactName</td>
+                <td>@item.ContactTitle</td>
+            </tr> 
+        }
+    </tbody>
+</table>
