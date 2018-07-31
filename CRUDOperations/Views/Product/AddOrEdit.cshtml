@@ -1,13 +1,12 @@
 ﻿@model CRUDOperations.Models.Products
 @{
-    ViewBag.Title = "AddOrEdit";
-
+    ViewBag.Title = "AddOrEdit"; 
 }
 @using (Html.BeginForm("AddOrEdit", "Product", FormMethod.Post, new { enctype = "multipart/form-data", onSubmit = "return jQueryAjaxPost(this);", data_restUrl = Url.Action("AddOrEdit", "Product", new { id = 0 }) }))//data-reset
 {
     @Html.AntiForgeryToken()
     <div class="row">
-        <div class="form-horizontal">
+        <div class="form-horizontal"> 
             @Html.ValidationSummary(true)
             @Html.HiddenFor(model => model.ProductID)
             @Html.HiddenFor(model => model.ImagePath)

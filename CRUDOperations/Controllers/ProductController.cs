@@ -6,12 +6,12 @@ using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using CRUDOperations;
 
 namespace CRUDOperations.Controllers
 {
     public class ProductController : Controller
     {
-        public object GlobalClass { get; private set; }
 
         [HttpGet]
         public ActionResult Index()
@@ -50,7 +50,8 @@ namespace CRUDOperations.Controllers
         [HttpPost]
         public ActionResult AddOrEdit(Products product)
         {
-           
+            try
+            {
                 if (product.ImageUpload != null)
                 {
                     string fileName = Path.GetFileNameWithoutExtension(product.ImageUpload.FileName);
@@ -61,11 +62,43 @@ namespace CRUDOperations.Controllers
                 }
                 using (Northwind db = new Northwind())
                 {
-                    db.Products.Add(product);
+                    if (product.ProductID == 0)
+                    {
+                        db.Products.Add(product);
+                        db.SaveChanges();
+                    }
+                    else
+                    {
+                        db.Entry(product).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+                }
+                return Json(new { success = true, html = GlobalClass.RenderRazorViewToString(this, "ViewAll", GetAllProducts()), message = "submitted successfuly" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                using (Northwind db = new Northwind())
+                {
+                    Products product = db.Products.Where(x => x.ProductID == id).FirstOrDefault();
+                    db.Products.Remove(product);
                     db.SaveChanges();
                 }
-                return RedirectToAction("ViewAll");
+                return Json(new { success = true, html = GlobalClass.RenderRazorViewToString(this, "ViewAll", GetAllProducts()), message = "Deleted Successfully" }, JsonRequestBehavior.AllowGet);
             }
-       }
-    
-}
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message }, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+    }
+}  
